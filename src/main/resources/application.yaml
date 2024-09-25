@@ -1,0 +1,20 @@
+spring:
+  application:
+    name: sprint-boot-hello-world
+
+server:
+  port: 8080
+
+management:
+  server:
+    port: 8089
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+    tags:
+      application: ${spring.application.name}
