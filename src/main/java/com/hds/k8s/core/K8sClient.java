@@ -57,13 +57,32 @@ public class K8sClient {
      *
      * @return podList
      */
-    public V1PodList getAllPodList(String namespace) {
+    public V1PodList getPodList(String namespace) {
         // new a CoreV1Api
         CoreV1Api api = new CoreV1Api(apiClient);
 
         // invokes the CoreV1Api client
         try {
             return api.listNamespacedPod(namespace).execute();
+        } catch (ApiException e) {
+            log.error("get podlist error:" + e.getResponseBody(), e);
+        }
+        return null;
+    }
+
+
+    /**
+     * get all Pods
+     *
+     * @return podList
+     */
+    public CoreV1EventList getEventList(String namespace) {
+        // new a CoreV1Api
+        CoreV1Api api = new CoreV1Api(apiClient);
+
+        // invokes the CoreV1Api client
+        try {
+            return api.listNamespacedEvent(namespace).execute();
         } catch (ApiException e) {
             log.error("get podlist error:" + e.getResponseBody(), e);
         }
