@@ -7,6 +7,7 @@ import io.kubernetes.client.openapi.apis.CoreV1Api;
 import io.kubernetes.client.openapi.models.*;
 import io.kubernetes.client.util.ClientBuilder;
 import io.kubernetes.client.util.KubeConfig;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -57,13 +58,17 @@ public class K8sClient {
      *
      * @return podList
      */
-    public V1PodList getPodList(String namespace) {
+    public V1PodList getPodList(String namespace, String label) {
         // new a CoreV1Api
         CoreV1Api api = new CoreV1Api(apiClient);
 
         // invokes the CoreV1Api client
         try {
-            return api.listNamespacedPod(namespace).execute();
+            CoreV1Api.APIlistNamespacedPodRequest request = api.listNamespacedPod(namespace);
+            if (StringUtils.isNotBlank(label)) {
+                request.labelSelector(String.format("app=%s", label));
+            }
+            return request.execute();
         } catch (ApiException e) {
             log.error("get podlist error:" + e.getResponseBody(), e);
         }
@@ -82,7 +87,8 @@ public class K8sClient {
 
         // invokes the CoreV1Api client
         try {
-            return api.listNamespacedEvent(namespace).execute();
+            CoreV1Api.APIlistNamespacedEventRequest request = api.listNamespacedEvent(namespace);
+            return request.execute();
         } catch (ApiException e) {
             log.error("get podlist error:" + e.getResponseBody(), e);
         }
